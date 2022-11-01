@@ -1,4 +1,3 @@
-const db = require('./db/db.js');
+const db = require('../db/db.js');
 
-
-module.exports = models;
+module.exports = {};

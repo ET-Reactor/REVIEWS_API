@@ -1,0 +1,23 @@
+{
+  "name": "qa_api",
+  "version": "1.0.0",
+  "description": "Questions and Answers API for e-commerce web application",
+  "main": "index.js",
+  "scripts": {
+    "server-dev": "npx nodemon --watch server server/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ET-Reactor/QA_API.git"
+  },
+  "author": "Josh Garza",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ET-Reactor/QA_API/issues"
+  },
+  "homepage": "https://github.com/ET-Reactor/QA_API#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
