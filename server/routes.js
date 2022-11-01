@@ -23,7 +23,7 @@ const router = require('express').Router();
 // router.post('/interactions/:element/:widget/:time')
 
 // // cart
-// router.get('/cart', controllers.cart.getAll)
+
 // router.post('/cart', controllers.cart.postOne)
 
 // QUESTIONS AND ANSWERS REQUESTS ---------------------------------------
