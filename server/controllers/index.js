@@ -1,6 +1,7 @@
-const models = require('./models/index.js');
+const models = require('../models');
 
+const getAllQ = (req, res) => {
+  res.status(200).send("get success")
+}
 
-
-
-module.exports = controllers;
+module.exports.getAllQ = getAllQ;

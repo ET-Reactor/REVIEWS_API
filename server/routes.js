@@ -28,17 +28,17 @@ const router = require('express').Router();
 
 // QUESTIONS AND ANSWERS REQUESTS ---------------------------------------
 // get all info
-router.get('/qa/questions', controllers.qa.getAllQ);
-router.get('/qa/questions/:id/answers', controllers.qa.getAllA);
-// post new info
-router.post('/qa/questions', controllers.qa.postQues);
-router.post('/qa/questions/:id/answers', controllers.qa.postAnsw);
-// change helpfulness and report
-router.put('/qa/questions/:id/helpful', controllers.qa.helpfulQues);
-router.put('/qa/questions/:id/report', controllers.qa.reportQues);
+router.get('/qa/questions', controllers.getAllQ);
+// router.get('/qa/questions/:id/answers', controllers.qa.getAllA);
+// // post new info
+// router.post('/qa/questions', controllers.qa.postQues);
+// router.post('/qa/questions/:id/answers', controllers.qa.postAnsw);
+// // change helpfulness and report
+// router.put('/qa/questions/:id/helpful', controllers.qa.helpfulQues);
+// router.put('/qa/questions/:id/report', controllers.qa.reportQues);
 
-router.put('/qa/answers/:id/helpful', controllers.qa.helpfulAnsw);
-router.put('/qa/answers/:id/report', controllers.qa.reportAnsw);
+// router.put('/qa/answers/:id/helpful', controllers.qa.helpfulAnsw);
+// router.put('/qa/answers/:id/report', controllers.qa.reportAnsw);
 
 
 module.exports = router;
