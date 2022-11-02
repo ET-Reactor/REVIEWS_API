@@ -1,19 +1,20 @@
 const controllers = require('./controllers/index.js');
 const router = require('express').Router();
 
-// QUESTIONS AND ANSWERS REQUESTS ---------------------------------------
-// get all info
-router.get('/qa/questions', controllers.getAllQ);
-router.get('/qa/questions/:id/answers', controllers.getAllA);
-// // post new info
-router.post('/qa/questions', controllers.postQues);
-router.post('/qa/questions/:id/answers', controllers.postAnsw);
-// // change helpfulness and report
-router.put('/qa/questions/:id/helpful', controllers.helpfulQues);
-router.put('/qa/questions/:id/report', controllers.reportQues);
+// route to... get :page*:count number of reviews of :id
+router.get('/reviews/:id/:page/:count/:sort', controllers.reviews.getReview);
 
-router.put('/qa/answers/:id/helpful', controllers.helpfulAnsw);
-router.put('/qa/answers/:id/report', controllers.reportAnsw);
+// "" ... get meta data of :id
+router.get('/reviews/meta/:id', controllers.reviews.getMeta)
+
+// "" ... post a review
+router.post('/reviews', controllers.reviews.postRev)
+
+// "" ... update the helpful coounter of :id
+router.put('/reviews/:id/helpful', controllers.reviews.helpfulRev);
+
+// "" ... update the report counter of :id
+router.put('/reviews/:id/report', controllers.reviews.reportRev);
 
 
 module.exports = router;
