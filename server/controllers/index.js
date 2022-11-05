@@ -2,23 +2,29 @@ const models = require('../models');
 
 module.exports = {
 
-  getReview: function (req, res) {
+  getReview: (req, res) => {
+    let page = req.params.page;
+    let count = req.params.count;
+    let prodID = req.params.id;
+    let sort = req.params.sort;
+    models.getReview(prodID, page, count, sort, (reviews) => {
+      res.send(reviews);
+    })
+  },
+
+  getMeta: (req, res) => {
     //models. ...
   },
 
-  getMeta: function (req, res) {
+  postRev: (req, res) => {
     //models. ...
   },
 
-  postRev: function (req, res) {
+  helpfulRev: (req, res) => {
     //models. ...
   },
 
-  helpfulRev: function (req, res) {
-    //models. ...
-  },
-
-  reportRev: function (req, res) {
+  reportRev: (req, res) => {
     //models. ...
   }
 

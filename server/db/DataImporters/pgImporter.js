@@ -15,7 +15,7 @@ let reviewsCsvStream = fastcsv
 
     // create a query to insert each row into the psqlDB
     const query =
-      "INSERT INTO reviews (id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness)"
+      "INSERT INTO reviews (id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness)";
 
     pool.connect((err, client, done) => {
       if (err) throw err;
