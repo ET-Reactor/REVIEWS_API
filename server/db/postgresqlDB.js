@@ -31,3 +31,5 @@ pool.query(
 )
   .then((res)=>{})
   .catch((err)=>{});
+
+  module.exports = pool;
