@@ -1,11 +1,15 @@
 const pool = require('../db/postgresqlDB.js');
+const { Pool } = require('pg');
 
 module.exports = {
 
   getReview: async (id, page, count, sort, cb) => {
-    const reviews = await pool.query('SELECT reviews.id, product_id, rating, summary, body, recommend, response, date, reviewer_name, helpfulness, photos.id, review_id, url FROM reviews FULL OUTER JOIN photos ON reviews.id = photos.review_id WHERE reviews.product_id = $1 LIMIT $2 OFFSET (($3 - 1) * $1)', [id, count, page]);
+    const reviews = await pool.query('SELECT * FROM reviews where productid = $1', [id]);
+    console.log(reviews);
     cb(reviews);
   },
+  // const reviews = await pool.query('SELECT id, product_id, rating, summary, body, recommend, response, date, reviewer_name, helpfulness FROM reviews WHERE product_id = $1 LIMIT $2 OFFSET (($3 - 1) * $1)', [id, count]);
+  //const reviews = await pool.query(`select * from reviews where product_id = 3`);
 
   getMeta: (id) => {
 
