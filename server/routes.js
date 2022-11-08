@@ -2,7 +2,7 @@ const controllers = require('./controllers/index.js');
 const router = require('express').Router();
 
 // route to... get :page*:count number of reviews of :id
-router.get('/reviews/:id/:page/:count/:sort', controllers.getReview);
+router.get('/reviews/:id/:page/:count/:sort', controllers.getReviews);
 
 // "" ... get meta data of :id
 router.get('/reviews/meta/:id', controllers.getMeta);
