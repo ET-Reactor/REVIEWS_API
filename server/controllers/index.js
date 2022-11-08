@@ -2,24 +2,45 @@ const models = require('../models');
 
 module.exports = {
 
-  getReview: function (req, res) {
-    //models. ...
+  getReviews: (req, res) => {
+    let page = req.params.page;
+    let count = req.params.count;
+    let prodID = req.params.id;
+    let sort = req.params.sort;
+    models.getReviews(prodID, page, count, sort, (reviews) => {
+      res.send(reviews);
+    });
   },
 
-  getMeta: function (req, res) {
+  getMeta: (req, res) => {
     //models. ...
+    let prodID = req.params.id;
+    models.getMeta(prodID, (meta) => {
+      res.send(meta);
+    });
   },
 
-  postRev: function (req, res) {
-    //models. ...
+  postRev: (req, res) => {
+    models.addReview(req.body, (err) => {
+      res.send(err);
+    });
   },
 
-  helpfulRev: function (req, res) {
+  helpfulRev: (req, res) => {
     //models. ...
+    let reviewID = req.params.id;
+    models.markHelpful(reviewID, (err) => {
+      res.send(err);
+    });
   },
 
-  reportRev: function (req, res) {
+  reportRev: (req, res) => {
     //models. ...
+    let reviewID = req.params.id;
+    console.log(req);
+    models.reportReview(reviewID, (err) => {
+      res.send(err);
+    });
   }
 
 }

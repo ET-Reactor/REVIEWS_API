@@ -1,4 +1,4 @@
-const {Pool} = require('pg');
+const { Pool } = require('pg');
 
 const pool = new Pool({
   user: 'et',
@@ -15,7 +15,7 @@ pool.query(
   .catch((err)=>{});
 
 pool.query(
-  'CREATE TABLE IF NOT EXISTS photos (id SERIAL, review_id INT NOT NULL, photos TEXT UNIQUE, PRIMARY KEY (id), FOREIGN KEY (review_id) REFERENCES reviews (id))'
+  'CREATE TABLE IF NOT EXISTS photos (id SERIAL, review_id INT NOT NULL, url TEXT, PRIMARY KEY (id), FOREIGN KEY (review_id) REFERENCES reviews (id))'
 )
   .then((res)=>{})
   .catch((err)=>{});
@@ -27,7 +27,9 @@ pool.query(
   .catch((err)=>{});
 
 pool.query(
-  'CREATE TABLE IF NOT EXISTS characteristics_reviews (characteristic_id INT NOT NULL, review_id INT NOT NULL, value INT NOT NULL, PRIMARY KEY (review_id, characteristic_id), FOREIGN KEY (characteristic_id) REFERENCES characteristics (id), FOREIGN KEY (review_id) REFERENCES reviews (id))'
+  'CREATE TABLE IF NOT EXISTS characteristics_reviews (id SERIAL, characteristic_id INT NOT NULL, review_id INT NOT NULL, value INT NOT NULL, PRIMARY KEY (id), FOREIGN KEY (characteristic_id) REFERENCES characteristics (id), FOREIGN KEY (review_id) REFERENCES reviews (id))'
 )
   .then((res)=>{})
   .catch((err)=>{});
+
+  module.exports = pool;
