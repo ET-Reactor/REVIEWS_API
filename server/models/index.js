@@ -28,7 +28,7 @@ module.exports = {
           date: reviews.rows[i].date,
           reviewer_name: reviews.rows[i].reviewer_name,
           helpfulness: reviews.rows[i].helpfulness,
-          photos: photos.rows,
+          photos: photos.rows
         }
       }
       cb(null, returnObj);
@@ -110,20 +110,28 @@ module.exports = {
 
   addReview: async function (reviewObj, cb) {
     // mongoDB/postgreSQL queries
-    // console.log(reviewObj.summary);
-    currentDate = "0000000000000";
+    currentDate = "00000000000";
     const client = await pool.connect();
     try {
-      const maxIDquery = await client.query('SELECT max(id) from reviews');
-      const maxID = maxIDquery.rows[0].max + 1;
-      await client.query('INSERT INTO reviews (id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, helpfulness) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)', [ maxID, reviewObj.product_id, reviewObj.rating, currentDate, reviewObj.summary, reviewObj.body, reviewObj.recommend, false, reviewObj.name, reviewObj.email, 0]);
-      for (let i = 0; i < reviewObj.photos.length; i++) {
-        var photosMax = await client.query('SELECT max(id) from photos');
-        var maxPhotoID = photosMax.rows[0].max + 1;
-        await client.query('INSERT INTO photos (id, review_id, url) VALUES ($1, $2, $3)', [ maxPhotoID, maxID, reviewObj.photos[i] ])
-          .catch(e => {
-            cb(e, null);
-          });
+      //const maxIDquery = await client.query('SELECT max(id) from reviews');
+      //const maxID = maxIDquery.rows[0].max + 1;
+      const reviewID = await client.query('INSERT INTO reviews (product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, helpfulness) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id', [ reviewObj.product_id, reviewObj.rating, currentDate, reviewObj.summary, reviewObj.body, reviewObj.recommend, false, reviewObj.name, reviewObj.email, 0 ]);
+      if (reviewObj.photos.length !== 0) {
+        for (let i = 0; i < reviewObj.photos.length; i++) {
+          //var photosMax = await client.query('SELECT max(id) from photos');
+          //var maxPhotoID = photosMax.rows[0].max + 1;
+          client.query('INSERT INTO photos (review_id, url) VALUES ($1, $2)', [ reviewID.rows[0].id, reviewObj.photos[i] ])
+            .catch(e => {
+              cb(e, null);
+            });
+        }
+      }
+      if (Object.keys(reviewObj.characteristics).length !== 0) {
+        for (keys in reviewObj.characteristics) {
+          let charId = Number(keys);
+          let value = reviewObj.characteristics[keys];
+          client.query('INSERT INTO characteristics_reviews (characteristic_id, review_id, value) VALUES ($1, $2, $3)', [ charId, reviewID.rows[0].id, value])
+        }
       }
       cb(null, 'success');
     } catch (err) {
