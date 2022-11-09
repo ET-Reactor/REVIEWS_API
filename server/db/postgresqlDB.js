@@ -32,4 +32,36 @@ pool.query(
   .then((res)=>{})
   .catch((err)=>{});
 
+
+// ----- create indexes
+pool.query(
+  'CREATE INDEX IF NOT EXISTS pk_id_idx ON reviews (id)'
+  )
+  .then((res)=>{})
+  .catch((err)=>{});
+
+pool.query(
+  'CREATE INDEX IF NOT EXISTS product_id_idx ON reviews (product_id)'
+  )
+  .then((res)=>{})
+  .catch((err)=>{});
+
+pool.query(
+  'CREATE INDEX IF NOT EXISTS review_id_idx ON photos (review_id)'
+  )
+  .then((res)=>{})
+  .catch((err)=>{});
+
+pool.query(
+  'CREATE INDEX IF NOT EXISTS rating_idx ON reviews (rating)'
+  )
+  .then((res)=>{})
+  .catch((err)=>{});
+
+pool.query(
+  'CREATE INDEX IF NOT EXISTS review_id_idx ON characteristics_reviews (review_id)'
+  )
+  .then((res)=>{})
+  .catch((err)=>{});
+
   module.exports = pool;
