@@ -4,35 +4,110 @@ const { Pool } = require('pg');
 module.exports = {
 
   getReviews: async (id, page, count, sort, cb) => {
+    const client = await pool.connect();
     let prodID = Number(id);
     let numberCount = Number(count);
     let pageCount = Number(page);
-    const client = await pool.connect();
+    let returnObj = {
+      product: prodID,
+      page: pageCount,
+      count: numberCount,
+      results: []
+    };
     try {
-      const reviews = await client.query('SELECT id, rating, summary, recommend, response, body, date, reviewer_name, helpfulness FROM reviews WHERE product_id = $1 LIMIT $2 OFFSET (($3 - 1) * $1)', [prodID, numberCount, pageCount]);
-      let returnObj = {
-        product: prodID,
-        page: pageCount,
-        count: numberCount,
-        results: []
-      };
+      const reviews = await client.query('SELECT reviews.id, rating, summary, recommend, response, body, date, reviewer_name, helpfulness, photos_id, photos.review_id, photos.url FROM reviews LEFT JOIN photos ON photos.review_id = reviews.id WHERE product_id = $1 LIMIT $2 OFFSET (($3 - 1) * $1)', [prodID, numberCount, pageCount]);
+
+
+      // loop through the query rows to input properly into returnObj for front-end
       for (let i = 0; i < reviews.rows.length; i++) {
-        const photos = await client.query('SELECT id, url FROM photos WHERE review_id = $1', [reviews.rows[i].id]);
-        returnObj.results[i] = {
-          review_id: reviews.rows[i].id,
-          rating: reviews.rows[i].rating,
-          summary: reviews.rows[i].summary,
-          recommend: reviews.rows[i].recommend,
-          response: reviews.rows[i].response,
-          body: reviews.rows[i].body,
-          date: reviews.rows[i].date,
-          reviewer_name: reviews.rows[i].reviewer_name,
-          helpfulness: reviews.rows[i].helpfulness,
-          photos: photos.rows
+        // check to see if the returnObj has any results inputted yet
+        if (returnObj.results.length === 0) { // first row of the query result
+          returnObj.results[0] = {
+            review_id: reviews.rows[0].id,
+            rating: reviews.rows[0].rating,
+            summary: reviews.rows[0].summary,
+            recommend: reviews.rows[0].recommend,
+            response: reviews.rows[0].response,
+            body: reviews.rows[0].body,
+            date: reviews.rows[0].date,
+            reviewer_name: reviews.rows[0].reviewer_name,
+            helpfulness: reviews.rows[0].helpfulness,
+            photos: []
+          }
+          if (reviews.rows[0].photos_id !== null) { // if it has photos, add them
+            let currentPhoto = {
+              id: reviews.rows[0].photos_id,
+              url: reviews.rows[0].url
+            };
+            returnObj.results[0].photos.push(currentPhoto);
+          }
+        }
+        else { // 2nd row + of the query result
+          let isFound = false;
+          for (let k = 0; k < returnObj.results.length; k++) {
+            if (returnObj.results[k].review_id === reviews.rows[i].id &&
+                reviews.rows[i].photos_id !== null) {
+              let currentPhoto = {
+                id: reviews.rows[i].photos_id,
+                url: reviews.rows[i].url
+              }
+              returnObj.results[k].photos.push(currentPhoto);
+              isFound = true;
+            }
+            if (isFound) {break};
+          }
+          if (!isFound) {
+            let newRev = {
+              review_id: reviews.rows[i].id,
+              rating: reviews.rows[i].rating,
+              summary: reviews.rows[i].summary,
+              recommend: reviews.rows[i].recommend,
+              response: reviews.rows[i].response,
+              body: reviews.rows[i].body,
+              date: reviews.rows[i].date,
+              reviewer_name: reviews.rows[i].reviewer_name,
+              helpfulness: reviews.rows[i].helpfulness,
+              photos: []
+            }
+            if (reviews.rows[i].photos_id !== null) { // if it has photos, add them
+              let currentPhoto = {
+                id: reviews.rows[i].photos_id,
+                url: reviews.rows[i].url
+              };
+              newRev.photos.push(currentPhoto);
+            }
+            returnObj.results.push(newRev);
+          }
         }
       }
+
+      // const reviews = await client.query('SELECT id, rating, summary, recommend, response, body, date, reviewer_name, helpfulness FROM reviews WHERE product_id = $1 LIMIT $2 OFFSET (($3 - 1) * $1)', [prodID, numberCount, pageCount]);
+      // let returnObj = {
+      //   product: prodID,
+      //   page: pageCount,
+      //   count: numberCount,
+      //   results: []
+      // };
+      // for (let i = 0; i < reviews.rows.length; i++) {
+      //   const photos = await client.query('SELECT id, url FROM photos WHERE review_id = $1', [reviews.rows[i].id]);
+      //   returnObj.results[i] = {
+      //     review_id: reviews.rows[i].id,
+      //     rating: reviews.rows[i].rating,
+      //     summary: reviews.rows[i].summary,
+      //     recommend: reviews.rows[i].recommend,
+      //     response: reviews.rows[i].response,
+      //     body: reviews.rows[i].body,
+      //     date: reviews.rows[i].date,
+      //     reviewer_name: reviews.rows[i].reviewer_name,
+      //     helpfulness: reviews.rows[i].helpfulness,
+      //     photos: photos.rows
+      //   }
+      // }
+
+
       cb(null, returnObj);
     } catch (err) {
+      console.log(err);
       cb(err, null);
     } finally {
       client.release();
@@ -120,7 +195,7 @@ module.exports = {
         for (let i = 0; i < reviewObj.photos.length; i++) {
           //var photosMax = await client.query('SELECT max(id) from photos');
           //var maxPhotoID = photosMax.rows[0].max + 1;
-          client.query('INSERT INTO photos (review_id, url) VALUES ($1, $2)', [ reviewID.rows[0].id, reviewObj.photos[i] ])
+          await client.query('INSERT INTO photos (review_id, url) VALUES ($1, $2)', [ reviewID.rows[0].id, reviewObj.photos[i] ])
             .catch(e => {
               cb(e, null);
             });
@@ -130,7 +205,7 @@ module.exports = {
         for (keys in reviewObj.characteristics) {
           let charId = Number(keys);
           let value = reviewObj.characteristics[keys];
-          client.query('INSERT INTO characteristics_reviews (characteristic_id, review_id, value) VALUES ($1, $2, $3)', [ charId, reviewID.rows[0].id, value])
+          await client.query('INSERT INTO characteristics_reviews (characteristic_id, review_id, value) VALUES ($1, $2, $3)', [ charId, reviewID.rows[0].id, value])
         }
       }
       cb(null, 'success');

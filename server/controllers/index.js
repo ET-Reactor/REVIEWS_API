@@ -10,7 +10,7 @@ module.exports = {
     models.getReviews(prodID, page, count, sort, (err, reviews) => {
       if (err) {
         res.status(404);
-        res.end(err);
+        res.end('' + err);
       } else {
         res.status(200);
         res.send(reviews);
@@ -65,7 +65,6 @@ module.exports = {
   reportRev: (req, res) => {
     //models. ...
     let reviewID = req.params.id;
-    console.log(req);
     models.reportReview(reviewID, (err, successStr) => {
       if (err) {
         res.status(404);
