@@ -15,7 +15,7 @@ module.exports = {
       results: []
     };
     try {
-      const reviews = await client.query('SELECT reviews.id, rating, summary, recommend, response, body, date, reviewer_name, helpfulness, photos_id, photos.review_id, photos.url FROM reviews LEFT JOIN photos ON photos.review_id = reviews.id WHERE product_id = $1 LIMIT $2 OFFSET (($3 - 1) * $1)', [prodID, numberCount, pageCount]);
+      const reviews = await client.query('SELECT reviews.id, rating, summary, recommend, response, body, date, reviewer_name, helpfulness, photos_id, photos.review_id, photos.url FROM reviews LEFT JOIN photos ON photos.review_id = reviews.id WHERE reviews.product_id = $1 LIMIT $2 OFFSET (($3 - 1) * $1)', [prodID, numberCount, pageCount]);
 
 
       // loop through the query rows to input properly into returnObj for front-end
